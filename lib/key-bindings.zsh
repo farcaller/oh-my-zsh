@@ -44,3 +44,5 @@ bindkey "\e[3~" delete-char
 ## Fix weird sequence that rxvt produces
 #bindkey -s '^[[Z' '\t'
 #
+bindkey '^[[5C' forward-word
+bindkey '^[[5D' backward-word
