@@ -16,9 +16,17 @@ alias history='fc -l 1'
 
 # List direcory contents
 alias lsa='ls -lah'
-alias l='ls -la'
+alias la='ls -la'
 alias ll='ls -l'
 alias sl=ls # often screw this up
 
 alias afind='ack-grep -il'
 
+DEV=~/Developer
+DOC=~/Documents
+DOW=~/Downloads
+DSK=~/Desktop
+TMP=~/temp
+DBX=~/Dropbox
+
+: ~DEV ~DOC ~DOW ~DSK ~TMP ~DBX
