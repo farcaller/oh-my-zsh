@@ -17,6 +17,11 @@ typedef struct {
 	char *abbr;
 } PathAlias;
 
+typedef struct {
+	char *dir;
+	char *color;
+} DevDirColor;
+
 static PathAlias Paths[] = {
 	// 1-level home dirs
 	{
@@ -57,6 +62,37 @@ static PathAlias Paths[] = {
 	},
 };
 
+static DevDirColor DevDirColors[] = {
+	{
+		.dir = "Active",
+		.color = "111",
+	},
+	{
+		.dir = "External",
+		.color = "202",
+	},
+	{
+		.dir = "Stash",
+		.color = "242"
+	},
+	{
+		.dir = NULL,
+		.color = "015",
+	},
+};
+
+char *dev_project_dir_color(char *path)
+{
+	int i = 0;
+	DevDirColor dc = DevDirColors[i];
+	while(dc.dir) {
+		if(strstr(path, dc.dir) == path)
+			break;
+		dc = DevDirColors[i++];
+	}
+	return dc.color;
+}
+
 PathAlias expand_basepath_abbr(char *path)
 {
 	int i = 0;
@@ -88,11 +124,13 @@ char *trim_to_subpath(char *path, int depth)
 }
 
 // side effect: would trim path to look correct
-char *dev_project_name(char **origpath)
+char *dev_project_name(char **origpath, char **devpath)
 {
 	static char projname[MAXPATHLEN];
 	static char bufpath[1];
+	static char devpathbuf[MAXPATHLEN];
 	bzero(projname, MAXPATHLEN);
+	bzero(devpathbuf, MAXPATHLEN);
 	bzero(bufpath, 1);
 	char *path = *origpath;
 	
@@ -101,6 +139,7 @@ char *dev_project_name(char **origpath)
 	}
 	
 	char *projpath = strchr(path[0] == '/' ? path+1 : path , '/');
+	*devpath = devpathbuf;
 	if(projpath) {
 		char *subprojpath = strchr(projpath+1, '/');
 		/* now we have
@@ -108,6 +147,12 @@ char *dev_project_name(char **origpath)
 		 * projpath -----------------------------^
 		 * subprojpath ---------------------------------^
 		 */
+		projpath[0] = '\0';
+		strlcat(devpathbuf, path, MAXPATHLEN);
+		projpath[0] = '/';
+		if(devpathbuf[0] == '/')
+			(*devpath)++;
+		
 		projpath++; // projpath points to project name
 		
 		if(!subprojpath)
@@ -164,11 +209,18 @@ int main(int argc, char **argv)
 		
 		// special case for ~DEV
 		if(strstr(pa.abbr, "~DEV") == pa.abbr) {
-			projname = dev_project_name(&path);
+			char *devpath;
+			projname = dev_project_name(&path, &devpath);
 			if(projname) {
 				//printf("[PROJTRIM(%s)]%s -> ", projname, path);
 				strlcat(outpath, ":", outsize);
-				STRCATCOLOR(outpath, "111", outsize);
+#ifdef COLORIZE
+				char *color = dev_project_dir_color(devpath);
+				strlcat(outpath, "%{\033[38;5;", outsize);
+				strlcat(outpath, color, outsize);
+				strlcat(outpath, "m%}", outsize);
+#endif
+				//STRCATCOLOR(outpath, "111", outsize);
 				strlcat(outpath, projname, outsize);
 				STRCATCOLOR(outpath, "015", outsize);
 				//strlcat(outpath, "/", outsize);
