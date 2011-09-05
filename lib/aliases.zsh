@@ -22,6 +22,8 @@ alias sl=ls # often screw this up
 
 alias afind='ack-grep -il'
 
+alias retmux='tmux attach || tmux new'
+
 DEV=~/Developer
 DOC=~/Documents
 DOW=~/Downloads
