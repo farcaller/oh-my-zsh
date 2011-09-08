@@ -12,3 +12,7 @@ setopt long_list_jobs
 export PAGER=less
 export LC_CTYPE=$LANG
 export LESS="-R"
+
+## cappuccino
+export NARWHAL_ENGINE=rhino
+export CAPP_BUILD="/Users/farcaller/Developer/External/cappuccino/Build"
