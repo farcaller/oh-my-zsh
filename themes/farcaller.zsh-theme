@@ -26,7 +26,7 @@ PROMPT='%{$FG[196]%}%(?..(%?%) )$(make-tidypath) %{$FG[230]%}%#%{$reset_color%} 
 
 # The right-hand prompt
 
-RPROMPT='%{$FG[178]%}$(rvm_gemset) %{$FG[219]%}$(git_prompt_info)%{$reset_color%}$(git_prompt_status)%{$reset_color%}'
+RPROMPT='%{$FG[178]%}$(py_virtualenv)$(rvm_gemset) %{$FG[219]%}$(git_prompt_info)%{$reset_color%}$(git_prompt_status)%{$reset_color%}'
 
 # Add this at the start of RPROMPT to include rvm info showing ruby-version@gemset-name
 # %{$fg[yellow]%}$(~/.rvm/bin/rvm-prompt)%{$reset_color%} 
@@ -55,11 +55,21 @@ ZSH_THEME_GIT_PROMPT_UNMERGED="%{$fg[magenta]%} ⓤ"
 
 # Determine if we are using a gemset.
 function rvm_gemset() {
-	P="`rvm-prompt`"
-	if [[ "$P" == "ruby-1.9.2-p290" ]]; then
-		P=""
-	fi
+    which rvm-prompt 2>&1 >/dev/null
+    if [ $? -eq 0 ]; then
+	    P="`rvm-prompt`"
+	    if [[ "$P" == "ruby-1.9.2-p290" ]]; then
+		    P=""
+	    fi
+    fi
 	echo "$P"
+}
+
+function py_virtualenv() {
+    BN=`basename "$VIRTUAL_ENV"`
+    if [ "$BN" != "" ]; then
+        echo "$BN "
+    fi
 }
 
 function make-tidypath() {
