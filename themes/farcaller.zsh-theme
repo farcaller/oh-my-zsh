@@ -21,7 +21,8 @@
 
 # The prompt
 
-PROMPT='%{$FG[196]%}%(?..(%?%) )%{$FG[017]%}[%!] $(make-tidypath) %{$FG[230]%}%#%{$reset_color%} '
+PROMPT='%{$FG[196]%}%(?..(%?%) )$(make-tidypath) %{$FG[230]%}%#%{$reset_color%} '
+## %{$FG[017]%}[%!]
 
 # The right-hand prompt
 
